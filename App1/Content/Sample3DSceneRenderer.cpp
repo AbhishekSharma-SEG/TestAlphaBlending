@@ -9,7 +9,7 @@ using namespace DirectX;
 using namespace Windows::Foundation;
 
 // Loads vertex and pixel shaders from files and instantiates the cube geometry.
-Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources, float x, float y, float w, float h) :
+Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources, float x, float y, float w, float h,float r, float g, float b) :
 	m_loadingComplete(false),
 	m_degreesPerSecond(45),
 	m_indexCount(0),
@@ -18,6 +18,7 @@ Sample3DSceneRenderer::Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceRes
 {
 	Rect = { x,y,w,h };
 	Center = { x + (w / 2),y + (h / 2) };
+	Color = { r, g, b };
 	CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
 }
@@ -258,12 +259,12 @@ void Sample3DSceneRenderer::CreateDeviceDependentResources()
 		auto position_bottom = rect.y + rect.w;
 
 		// Load mesh vertices. Each vertex has a position and a color.
-		static const VertexPositionColor cubeVertices[] =
+		VertexPositionColor cubeVertices[] =
 		{
-			{XMFLOAT3(position_left , position_bottom,	0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f)},
-			{XMFLOAT3(position_left , position_top,		0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f)},
-			{XMFLOAT3(position_right, position_bottom,	0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f)},
-			{XMFLOAT3(position_right, position_top,		 0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f)},
+			{XMFLOAT3(position_left , position_bottom,	0.0f), XMFLOAT3(Color.x, Color.y, Color.z)},
+			{XMFLOAT3(position_left , position_top,		0.0f), XMFLOAT3(Color.x, Color.y, Color.z)},
+			{XMFLOAT3(position_right, position_bottom,	0.0f), XMFLOAT3(Color.x, Color.y, Color.z)},
+			{XMFLOAT3(position_right, position_top,		0.0f), XMFLOAT3(Color.x, Color.y, Color.z)},
 		};
 
 

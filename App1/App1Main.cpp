@@ -15,8 +15,8 @@ App1Main::App1Main(const std::shared_ptr<DX::DeviceResources>& deviceResources) 
 	m_deviceResources->RegisterDeviceNotify(this);
 
 	// TODO: Replace this with your app's content initialization.
-	m_sceneRenderer = std::unique_ptr<Sample3DSceneRenderer>(new Sample3DSceneRenderer(m_deviceResources, 200.0,200.0,300.0,300.0));
-	m_sceneRenderer_1 = std::unique_ptr<Sample3DSceneRenderer>(new Sample3DSceneRenderer(m_deviceResources, 300.0,300.0,300.0,300.0));
+	m_red = std::unique_ptr<Sample3DSceneRenderer>(new Sample3DSceneRenderer(m_deviceResources, 200.0, 200.0, 300.0, 300.0, 1.0, 0.0, 0.0));
+	m_yellow = std::unique_ptr<Sample3DSceneRenderer>(new Sample3DSceneRenderer(m_deviceResources, 300.0, 300.0, 300.0, 300.0, 1.0, 1.0, 0.0));
 
 	m_fpsTextRenderer = std::unique_ptr<SampleFpsTextRenderer>(new SampleFpsTextRenderer(m_deviceResources));
 
@@ -35,11 +35,11 @@ App1Main::~App1Main()
 }
 
 // Updates application state when the window size changes (e.g. device orientation change)
-void App1Main::CreateWindowSizeDependentResources() 
+void App1Main::CreateWindowSizeDependentResources()
 {
 	// TODO: Replace this with the size-dependent initialization of your app's content.
-	m_sceneRenderer->CreateWindowSizeDependentResources();
-	m_sceneRenderer_1->CreateWindowSizeDependentResources();
+	m_red->CreateWindowSizeDependentResources();
+	m_yellow->CreateWindowSizeDependentResources();
 }
 
 void App1Main::StartRenderLoop()
@@ -51,19 +51,19 @@ void App1Main::StartRenderLoop()
 	}
 
 	// Create a task that will be run on a background thread.
-	auto workItemHandler = ref new WorkItemHandler([this](IAsyncAction ^ action)
-	{
-		// Calculate the updated frame and render once per vertical blanking interval.
-		while (action->Status == AsyncStatus::Started)
+	auto workItemHandler = ref new WorkItemHandler([this](IAsyncAction^ action)
 		{
-			critical_section::scoped_lock lock(m_criticalSection);
-			Update();
-			if (Render())
+			// Calculate the updated frame and render once per vertical blanking interval.
+			while (action->Status == AsyncStatus::Started)
 			{
-				m_deviceResources->Present();
+				critical_section::scoped_lock lock(m_criticalSection);
+				Update();
+				if (Render())
+				{
+					m_deviceResources->Present();
+				}
 			}
-		}
-	});
+		});
 
 	// Run task on a dedicated high priority background thread.
 	m_renderLoopWorker = ThreadPool::RunAsync(workItemHandler, WorkItemPriority::High, WorkItemOptions::TimeSliced);
@@ -75,31 +75,31 @@ void App1Main::StopRenderLoop()
 }
 
 // Updates the application state once per frame.
-void App1Main::Update() 
+void App1Main::Update()
 {
 	ProcessInput();
 
 	// Update scene objects.
 	m_timer.Tick([&]()
-	{
-		// TODO: Replace this with your app's content update functions.
-		m_sceneRenderer->Update(m_timer);
-		m_sceneRenderer_1->Update(m_timer);
-		m_fpsTextRenderer->Update(m_timer);
-	});
+		{
+			// TODO: Replace this with your app's content update functions.
+			m_red->Update(m_timer);
+			m_yellow->Update(m_timer);
+			m_fpsTextRenderer->Update(m_timer);
+		});
 }
 
 // Process all input from the user before updating game state
 void App1Main::ProcessInput()
 {
 	// TODO: Add per frame input handling here.
-	m_sceneRenderer->TrackingUpdate(m_pointerLocationX);
-	m_sceneRenderer_1->TrackingUpdate(m_pointerLocationX);
+	m_red->TrackingUpdate(m_pointerLocationX);
+	m_yellow->TrackingUpdate(m_pointerLocationX);
 }
 
 // Renders the current frame according to the current application state.
 // Returns true if the frame was rendered and is ready to be displayed.
-bool App1Main::Render() 
+bool App1Main::Render()
 {
 	// Don't try to render anything before the first Update.
 	if (m_timer.GetFrameCount() == 0)
@@ -114,17 +114,18 @@ bool App1Main::Render()
 	context->RSSetViewports(1, &viewport);
 
 	// Reset render targets to the screen.
-	ID3D11RenderTargetView *const targets[1] = { m_deviceResources->GetBackBufferRenderTargetView() };
+	ID3D11RenderTargetView* const targets[1] = { m_deviceResources->GetBackBufferRenderTargetView() };
 	context->OMSetRenderTargets(1, targets, m_deviceResources->GetDepthStencilView());
 
 	// Clear the back buffer and depth stencil view.
-	context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), DirectX::Colors::Black);
+	float color[] = {0.0, 0.0, 0.0, 0.0};
+	context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), color);
 	context->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	// Render the scene objects.
 	// TODO: Replace this with your app's content rendering functions.
-	m_sceneRenderer->Render();
-	m_sceneRenderer_1->Render();
+	m_yellow->Render();
+	m_red->Render();
 	m_fpsTextRenderer->Render();
 
 	return true;
@@ -133,16 +134,16 @@ bool App1Main::Render()
 // Notifies renderers that device resources need to be released.
 void App1Main::OnDeviceLost()
 {
-	m_sceneRenderer->ReleaseDeviceDependentResources();
-	m_sceneRenderer_1->ReleaseDeviceDependentResources();
+	m_red->ReleaseDeviceDependentResources();
+	m_yellow->ReleaseDeviceDependentResources();
 	m_fpsTextRenderer->ReleaseDeviceDependentResources();
 }
 
 // Notifies renderers that device resources may now be recreated.
 void App1Main::OnDeviceRestored()
 {
-	m_sceneRenderer->CreateDeviceDependentResources();
-	m_sceneRenderer_1->CreateDeviceDependentResources();
+	m_red->CreateDeviceDependentResources();
+	m_yellow->CreateDeviceDependentResources();
 	m_fpsTextRenderer->CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
 }

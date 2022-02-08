@@ -14,10 +14,10 @@ namespace App1
 		App1Main(const std::shared_ptr<DX::DeviceResources>& deviceResources);
 		~App1Main();
 		void CreateWindowSizeDependentResources();
-		void StartTracking() { m_sceneRenderer->StartTracking(); }
+		void StartTracking() { m_red->StartTracking(); }
 		void TrackingUpdate(float positionX) { m_pointerLocationX = positionX; }
-		void StopTracking() { m_sceneRenderer->StopTracking(); }
-		bool IsTracking() { return m_sceneRenderer->IsTracking(); }
+		void StopTracking() { m_red->StopTracking(); }
+		bool IsTracking() { return m_red->IsTracking(); }
 		void StartRenderLoop();
 		void StopRenderLoop();
 		Concurrency::critical_section& GetCriticalSection() { return m_criticalSection; }
@@ -35,8 +35,8 @@ namespace App1
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;
 
 		// TODO: Replace with your own content renderers.
-		std::unique_ptr<Sample3DSceneRenderer> m_sceneRenderer;
-		std::unique_ptr<Sample3DSceneRenderer> m_sceneRenderer_1;
+		std::unique_ptr<Sample3DSceneRenderer> m_red;
+		std::unique_ptr<Sample3DSceneRenderer> m_yellow;
 		std::unique_ptr<SampleFpsTextRenderer> m_fpsTextRenderer;
 
 		Windows::Foundation::IAsyncAction^ m_renderLoopWorker;

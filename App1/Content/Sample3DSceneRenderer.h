@@ -10,7 +10,7 @@ namespace App1
 	class Sample3DSceneRenderer
 	{
 	public:
-		Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources, float x, float y, float w, float h);
+		Sample3DSceneRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources, float x, float y, float w, float h, float r, float g , float b);
 		void CreateDeviceDependentResources();
 		void CreateWindowSizeDependentResources();
 		void ReleaseDeviceDependentResources();
@@ -47,6 +47,7 @@ namespace App1
 		bool	m_tracking;
 		DirectX::XMFLOAT4 Rect;
 		DirectX::XMFLOAT2 Center;
+		DirectX::XMFLOAT3 Color;
 	};
 }
 
