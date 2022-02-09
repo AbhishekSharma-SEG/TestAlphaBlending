@@ -288,7 +288,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;	// All Microsoft Store apps must use _FLIP_ SwapEffects.
 		swapChainDesc.Flags = 0;
 		swapChainDesc.Scaling = scaling;
-		swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_PREMULTIPLIED;
+		swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
 
 		// This sequence obtains the DXGI factory that was used to create the Direct3D device above.
 		ComPtr<IDXGIDevice3> dxgiDevice;
@@ -553,7 +553,7 @@ void DX::DeviceResources::CreateOtherResource()
 }
 void DX::DeviceResources::TurnOnAlphaBlending()
 {
-	float input[4] = { 0,0,0,0 };
+	float input[4] = { 1,1,1,1 };
 	m_d3dContext->OMSetBlendState(AlphaEnableBlendingState, input, 1);
 }
 void DX::DeviceResources::TurnOffAlphaBlending()
