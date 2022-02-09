@@ -118,7 +118,7 @@ bool App1Main::Render()
 	context->OMSetRenderTargets(1, targets, m_deviceResources->GetDepthStencilView());
 
 	// Clear the back buffer and depth stencil view.
-	float color[] = {0.0, 0.0, 0.0, 1.0};
+	float color[] = {0.0, 0.0, 0.0, 0.0};
 	context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), color);
 	context->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
