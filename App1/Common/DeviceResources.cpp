@@ -516,26 +516,40 @@ void DX::DeviceResources::CreateOtherResource()
 		&m_sampler
 	);
 	// Create an alpha enabled blend state description.
-	D3D11_BLEND_DESC blendDesc;
-	blendDesc.RenderTarget[0].BlendEnable = true;
+	// For Premultiplied
 
-	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_COLOR;
-	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_COLOR;
-	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-
+	D3D11_BLEND_DESC blendDesc = {};
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc.RenderTarget[0].SrcBlend =
+		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendDesc.RenderTarget[0].DestBlend =
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp =
+		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	
+	// For Strainght
+
+	/*D3D11_BLEND_DESC blendDesc = {};
+	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc.RenderTarget[0].SrcBlend =
+		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].DestBlend =
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp =
+		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;*/
 
 	blendDesc.IndependentBlendEnable = false;
 	blendDesc.AlphaToCoverageEnable = false;
 
 	auto hr = m_d3dDevice->CreateBlendState(&blendDesc, &AlphaEnableBlendingState);
-	blendDesc.RenderTarget[0].BlendEnable = false;
-	m_d3dDevice->CreateBlendState(&blendDesc, &AlphaDisableBlendingState);
-	TurnOnAlphaBlending();
+	if (SUCCEEDED(hr)) 
+	{
+		blendDesc.RenderTarget[0].BlendEnable = false;
+		m_d3dDevice->CreateBlendState(&blendDesc, &AlphaDisableBlendingState);
+		TurnOnAlphaBlending();
+	}
 }
 void DX::DeviceResources::TurnOnAlphaBlending()
 {
