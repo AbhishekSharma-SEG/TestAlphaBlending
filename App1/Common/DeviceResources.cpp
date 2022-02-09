@@ -545,7 +545,7 @@ void DX::DeviceResources::CreateOtherResource()
 	// Create an alpha enabled blend state description.
 	// For Premultiplied
 
-	D3D11_BLEND_DESC blendDesc = {};
+	/*D3D11_BLEND_DESC blendDesc = {};
 	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 	blendDesc.RenderTarget[0].SrcBlend =
 		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
@@ -553,11 +553,11 @@ void DX::DeviceResources::CreateOtherResource()
 		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
 	blendDesc.RenderTarget[0].BlendOp =
 		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;*/
 	
 	// For Strainght
 
-	/*D3D11_BLEND_DESC blendDesc = {};
+	D3D11_BLEND_DESC blendDesc = {};
 	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 	blendDesc.RenderTarget[0].SrcBlend =
 		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_SRC_ALPHA;
@@ -565,7 +565,7 @@ void DX::DeviceResources::CreateOtherResource()
 		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
 	blendDesc.RenderTarget[0].BlendOp =
 		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;*/
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
 	blendDesc.IndependentBlendEnable = false;
 	blendDesc.AlphaToCoverageEnable = false;
@@ -585,7 +585,7 @@ void DX::DeviceResources::TurnOnAlphaBlending()
 }
 void DX::DeviceResources::TurnOffAlphaBlending()
 {
-	float input[4] = { 0,0,0,0 };
+	float input[4] = { 1,1,1,1 };
 	m_d3dContext->OMSetBlendState(AlphaDisableBlendingState, input, 1);
 }
 
